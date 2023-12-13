@@ -19,6 +19,8 @@ parseInput (seeds:ranges) =
                 $ splitOn [""]
                 $ drop 1 ranges
 
+
+
 calculate (seeds,[]) = seeds
 calculate (seeds,(r:rs)) = 
     calculate (seeds', rs)
@@ -33,4 +35,33 @@ part1 = do
              $ foldl (\a b -> min <$> a <*> b <|> a <|> b) (Nothing)
              $ calculate
              $ parseInput
+             $ lines inp
+
+groupBy2 [] = []
+groupBy2 (a:b:xs) =
+    (a,b):(groupBy2 xs)
+
+
+parseInput2 (seeds:ranges) =
+    (seeds', ranges')
+    where
+        seeds' :: [(Maybe Int, Maybe Int)]
+        seeds' = groupBy2
+               $ map Just
+               $ map read
+               $ splitOn " "
+               $ drop 2
+               $ dropWhile ((/=) ':') seeds
+        
+        ranges' :: [[(Int -> Maybe Int)]]
+        ranges' = map (map ((\(a:b:c:[]) -> (\n -> if b <= n && n < b + c then Just (a + n - b) else Nothing)) . (map read . (splitOn " "))) . tail)
+                $ splitOn [""]
+                $ drop 1 ranges
+
+part2 :: IO ()
+part2 = do
+    inp <- readFile "input.txt"
+    putStrLn $ show
+             $ fst
+             $ parseInput2
              $ lines inp
