@@ -19,9 +19,8 @@ parse inp =
           instructions = head inp'
           nodes = Map.fromList $ map parseNode (tail inp')
 
-calculate :: String -> (String, Map.Map String (String, String)) -> Int
-calculate k (i:is, nodes) =
-    if k == "ZZZ" then 0 else 1 + calculate k' (is, nodes)
+calculate pred k (i:is, nodes) =
+    if pred k then 0 else 1 + calculate pred k' (is, nodes)
     where
         v = nodes Map.! k
         k' = case i of
@@ -32,7 +31,7 @@ part1 :: IO ()
 part1 = do
     inp <- readFile "input.txt"
     putStrLn $ show
-             $ calculate "AAA"
+             $ calculate ((==) "ZZZ") "AAA"
              $ parse inp
 
 part2 :: IO ()
@@ -42,16 +41,8 @@ part2 = do
              $ foldl lcm 1
              $ part2'
              $ parse inp
-
-part2' (is, nodes) =
-    map (flip calculate2 (is, nodes)) ks
     where
-        ks = filter ((==) 'A' . last)(Map.keys nodes)
-
-calculate2 k (i:is, nodes) =
-    if last k == 'Z' then 0 else 1 + calculate2 k' (is, nodes)
-    where
-        v = nodes Map.! k
-        k' = case i of
-            'L' -> fst v
-            'R' -> snd v
+        part2' (is, nodes) =
+            map 
+                (\k -> calculate ((==) 'Z' . last) k (is, nodes))
+                (filter ((==) 'A' . last)(Map.keys nodes))
