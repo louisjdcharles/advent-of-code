@@ -36,11 +36,13 @@ executable advent-of-code
                    Day5
                    Day6
                    Day7
+                   Day8
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends: base ^>=4.15.1.0,
-                   split ^>=0.2.4
+                   split ^>=0.2.4,
+                   containers ^>=0.6.4.1
 
 
     hs-source-dirs:   app
